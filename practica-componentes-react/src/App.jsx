@@ -64,13 +64,8 @@ function App() {
     //revisar si hay un ganador
     const newWinner = checkWinner(newBoard);
     if (newWinner) {
-      setWinner(() => 
-    
-    );
-      // alert(`El ganador es ${newWinner}`); //salta 
-      //la alerta antes de poner el ganador en el tablero porque
-      // el estado se actualiza de manera asincrona
-    }
+      setWinner(newWinner);
+    } //TODO: check if game is over
   };
 
   return (
@@ -85,10 +80,13 @@ function App() {
           );
         })}
       </section>
+
       <section className="turn">
         <Square isSelected={turn === TURNS.X}>{TURNS.X}</Square>
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
+
+      {(winner = !null())}
     </main>
   );
 }
