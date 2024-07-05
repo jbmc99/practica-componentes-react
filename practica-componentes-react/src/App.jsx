@@ -1,31 +1,7 @@
 import { useState } from "react";
-const TURNS = {
-  X: "x",
-  O: "o",
-};
-
-const Square = ({ children, isSelected, updateBoard, index }) => {
-  const className = `square ${isSelected ? "is-selected" : ""}`;
-  const handleClick = () => {
-    updateBoard(index);
-  };
-  return (
-    <div onClick={handleClick} className={className}>
-      {children}
-    </div>
-  );
-};
-
-const WINNER_COMBOS = [
-  [0, 1, 2], //horizontal
-  [3, 4, 5], //horizontal
-  [6, 7, 8], //horizontal
-  [0, 3, 6], //vertical
-  [1, 4, 7], //vertical
-  [2, 5, 8], //vertical
-  [0, 4, 8], //diagonal
-  [2, 4, 6], //diagonal
-];
+import confetti from "canvas-confetti";
+import { Square } from "./components/Square.jsx";
+import { TURNS, WINNER_COMBOS } from "./components/constants.js";
 
 function App() {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -46,7 +22,20 @@ function App() {
         return boardToCheck[a];
       }
     }
+    //si no hay ganador y no hay espacios vacíos, es un empate
     return null;
+  };
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setTurn(TURNS.X);
+    setWinner(null);
+  };
+
+  const checkEndGame = (newBoard) => {
+    //revisamos si hay un empate
+    //si no hay más espacios vacíos en el tablero
+    return newBoard.every((square) => square !== null);
   };
 
   const updateBoard = (index) => {
@@ -64,13 +53,17 @@ function App() {
     //revisar si hay un ganador
     const newWinner = checkWinner(newBoard);
     if (newWinner) {
+      confetti();
       setWinner(newWinner);
-    } //TODO: check if game is over
+    } else if (checkEndGame(newBoard)) {
+      setWinner(false); //empate
+    }
   };
 
   return (
     <main className="board">
       <h1>Tic Tac Toe</h1>
+      <button onClick={resetGame}>Reiniciar juego</button>
       <section className="game">
         {board.map((_, index) => {
           return (
@@ -86,7 +79,21 @@ function App() {
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
 
-      {(winner = !null())}
+      {winner !== null && (
+        <section className="winner">
+          <div className="text">
+            <h2>{winner === false ? "Empate" : "Ganó: "}</h2>
+
+            <header className="win">
+              {winner && <Square>{winner}</Square>}
+            </header>
+
+            <footer>
+              <button onClick={resetGame}>Empezar de nuevo</button>
+            </footer>
+          </div>
+        </section>
+      )}
     </main>
   );
 }
