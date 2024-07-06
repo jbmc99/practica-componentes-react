@@ -2,10 +2,19 @@ import { useState } from "react";
 import confetti from "canvas-confetti";
 import { Square } from "./components/Square.jsx";
 import { TURNS, WINNER_COMBOS } from "./components/constants.js";
-
+import { saveGame, resetGameStorage } from "./storage/index.js";
 function App() {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [turn, setTurn] = useState(TURNS.X);
+  const [board, setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem("board");
+    return boardFromStorage
+      ? JSON.parse(boardFromStorage)
+      : Array(9).fill(null);
+  });
+
+  const [turn, setTurn] = useState(() => {
+    const turnLocalStorage = window.localStorage.getItem("turn");
+    return turnLocalStorage ? turnLocalStorage : TURNS.X;
+  });
   const [winner, setWinner] = useState(null); //null es que no hay ganador,
   //false es que hay un empate y el valor de la constante TURNS es el ganador
 
@@ -30,6 +39,8 @@ function App() {
     setBoard(Array(9).fill(null));
     setTurn(TURNS.X);
     setWinner(null);
+
+    resetGameStorage();
   };
 
   const checkEndGame = (newBoard) => {
@@ -50,6 +61,10 @@ function App() {
     //cambiar el turno
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
+    // guardar aqui partida
+    saveGame({ board: newBoard, turn: newTurn }
+    );
+
     //revisar si hay un ganador
     const newWinner = checkWinner(newBoard);
     if (newWinner) {
