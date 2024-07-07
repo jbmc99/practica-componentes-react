@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { Square } from "./components/Square.jsx";
 import { TURNS, WINNER_COMBOS } from "./components/constants.js";
@@ -62,8 +62,7 @@ function App() {
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
     // guardar aqui partida
-    saveGame({ board: newBoard, turn: newTurn }
-    );
+    saveGame({ board: newBoard, turn: newTurn });
 
     //revisar si hay un ganador
     const newWinner = checkWinner(newBoard);
@@ -74,6 +73,19 @@ function App() {
       setWinner(false); //empate
     }
   };
+
+  // useEffect(() => {
+  //   console.log("useEffect");
+  //   //si ponemos un array vacío, el useEffect se ejecutará solo una vez
+  //   //si tenemos un estado y queremos por ejemplo guardarlo en la bbdd
+  //   //podemos ponerlo en el array de dependencias
+  // }, [winner]);
+  // useEffect(() => {
+  //   saveGameToStorage({
+  //     board: newBoard,
+  //     turn: newTurn
+  //   })
+  // }, [turn, board])
 
   return (
     <main className="board">
